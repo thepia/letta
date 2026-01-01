@@ -116,6 +116,36 @@ for message in response.messages:
     print(message)
 ```
 
+## Server installation
+
+> uv pip install --python 3.12 git+https://github.com/thepia/letta.git
+> uv run letta server
+
+**Configuration**: You'll still need to create a .env file in ~/.letta/ by default. 
+You can set:
+LETTA_PG_URI=postgresql+pg8000://postgres:postgres@localhost:5432/letta
+LETTA_ENCRYPTION_KEY=your-key-here
+GEMINI_API_KEY=your-gemini-key
+ANTHROPIC_API_KEY=your-anthropic-key
+OPENAI_API_KEY=your-openai-key
+
+See the [self-hosting guide](https://docs.letta.com/guides/selfhosting/) for instructions on how to install and run Letta on your own server.
+
+### Required packages on server
+
+- git
+- python3
+- uv
+- postgresql
+- pgvector
+
+### Install with docker hub
+
+To include Thepia specific modifications
+
+> docker pull thepia/letta:latest
+
+
 ## Contributing
 
 Letta is an open source project built by over a hundred contributors from around the world. There are many ways to get involved in the Letta OSS project!
