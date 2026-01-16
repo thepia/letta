@@ -1,15 +1,17 @@
 name: 🌿 Preview TypeScript SDK
 
 on:
-  pull_request:
-    branches:
-      - main
-  push:
-    branches:
-      - main
-    paths:
-      - 'fern/openapi.json'
-      - 'fern/openapi-overrides.yml'
+  workflow_dispatch:
+  # TODO: Re-enable automatic triggers
+  # pull_request:
+  #   branches:
+  #     - main
+  # push:
+  #   branches:
+  #     - main
+  #   paths:
+  #     - 'fern/openapi.json'
+  #     - 'fern/openapi-overrides.yml'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}

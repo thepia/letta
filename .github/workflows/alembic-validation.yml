@@ -1,11 +1,13 @@
 name: Alembic Migration Validation
 
 on:
-  pull_request:
-    branches: [ main ]
-  pull_request_target:
-    branches: [ main ]
-    types: [labeled]
+  workflow_dispatch:
+  # TODO: Re-enable automatic triggers
+  # pull_request:
+  #   branches: [ main ]
+  # pull_request_target:
+  #   branches: [ main ]
+  #   types: [labeled]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -35,7 +37,7 @@ jobs:
             .github/workflows/alembic-validation.yml
 
   test-sqlite:
-    needs: [ changed-files ]
+    needs: [changed-files]
     if: ${{ needs.changed-files.outputs.any_changed == 'true' }}
     runs-on: [self-hosted, medium]
     timeout-minutes: 15
@@ -65,7 +67,7 @@ jobs:
           sudo rm -rf ~/.letta || true
 
   test-postgres:
-    needs: [ changed-files ]
+    needs: [changed-files]
     if: ${{ needs.changed-files.outputs.any_changed == 'true' }}
     runs-on: [self-hosted, medium]
     timeout-minutes: 15

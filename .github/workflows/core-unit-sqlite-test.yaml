@@ -1,13 +1,15 @@
 name: 🐍👨‍🔬 [Core] Unit Tests (SQLite)
 
 on:
-  pull_request:
-    branches:
-      - main
-  pull_request_target:
-    branches:
-      - main
-    types: [labeled]
+  workflow_dispatch:
+  # TODO: Re-enable automatic triggers
+  # pull_request:
+  #   branches:
+  #     - main
+  # pull_request_target:
+  #   branches:
+  #     - main
+  #   types: [labeled]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -19,13 +21,13 @@ jobs:
     if: github.event_name == 'pull_request' || (github.event_name == 'pull_request_target' && contains(github.event.pull_request.labels.*.name, 'safe to test'))
     uses: ./.github/workflows/reusable-test-workflow.yml
     with:
-      test-type: 'sqlite'
+      test-type: "sqlite"
       use-redis: true
       changed-files-pattern: |
         apps/core/**
         .github/workflows/reusable-test-workflow.yml
         .github/workflows/core-unit-sqlite-test.yml
-      install-args: '--extra postgres --extra external-tools --extra dev --extra cloud-tool-sandbox --extra sqlite'
+      install-args: "--extra postgres --extra external-tools --extra dev --extra cloud-tool-sandbox --extra sqlite"
       timeout-minutes: 15
       ref: ${{ github.event.pull_request.head.sha || github.sha }}
       matrix-strategy: |

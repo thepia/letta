@@ -7,12 +7,13 @@ on:
         description: "The version of the TypeScript SDK that you would like to release"
         required: true
         type: string
-  workflow_run:
-    workflows: ["🌿 Preview TypeScript SDK"]
-    types:
-      - completed
-    branches:
-      - main
+  # TODO: Re-enable automatic triggers
+  # workflow_run:
+  #   workflows: ["🌿 Preview TypeScript SDK"]
+  #   types:
+  #     - completed
+  #   branches:
+  #     - main
 
 jobs:
   release:

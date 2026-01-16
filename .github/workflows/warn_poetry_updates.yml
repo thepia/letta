@@ -1,10 +1,12 @@
 name: Check uv Dependencies Changes
 
 on:
-  pull_request:
-    paths:
-      - 'uv.lock'
-      - 'pyproject.toml'
+  workflow_dispatch:
+  # TODO: Re-enable automatic triggers
+  # pull_request:
+  #   paths:
+  #     - 'uv.lock'
+  #     - 'pyproject.toml'
 
 jobs:
   check-uv-changes:

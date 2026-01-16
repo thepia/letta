@@ -1,19 +1,21 @@
 name: 🌿 Preview Python SDK
 
 on:
-  pull_request:
-    branches:
-      - main
-  pull_request_target:
-    branches:
-      - main
-    types: [labeled]
-  push:
-    branches:
-      - main
-    paths:
-      - 'fern/openapi.json'
-      - 'fern/openapi-overrides.yml'
+  workflow_dispatch:
+  # TODO: Re-enable automatic triggers
+  # pull_request:
+  #   branches:
+  #     - main
+  # pull_request_target:
+  #   branches:
+  #     - main
+  #   types: [labeled]
+  # push:
+  #   branches:
+  #     - main
+  #   paths:
+  #     - 'fern/openapi.json'
+  #     - 'fern/openapi-overrides.yml'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -65,7 +67,6 @@ jobs:
           --health-timeout 5s
           --health-retries 5
     steps:
-
       - name: Checkout repo
         uses: actions/checkout@v4
         with:

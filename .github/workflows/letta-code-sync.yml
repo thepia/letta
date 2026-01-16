@@ -1,9 +1,11 @@
 name: Sync Code
 
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
+  # TODO: Re-enable automatic triggers
+  # push:
+  #   branches:
+  #     - main
 
 jobs:
   notify:

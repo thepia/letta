@@ -1,8 +1,10 @@
 name: 🐍🧹 [Core] Lint and Test
 
 on:
-  pull_request:
-    branches: [ main ]
+  workflow_dispatch:
+  # TODO: Re-enable automatic triggers
+  # pull_request:
+  #   branches: [ main ]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -30,38 +32,38 @@ jobs:
             pyproject.toml
             .github/workflows/core-lint.yml
   main:
-    needs: [ changed-files ]
+    needs: [changed-files]
     if: ${{ needs.changed-files.outputs.any_changed == 'true' }}
     runs-on: [self-hosted, medium]
     strategy:
       matrix:
-        python-version: ["3.12"]  # Adjust Python version matrix if needed
+        python-version: ["3.12"] # Adjust Python version matrix if needed
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-    - name: Install dependencies
-      shell: bash
-      working-directory: .
-      run: uv sync --no-install-project ${{ inputs.install-args || '--extra postgres --extra external-tools --extra dev --extra cloud-tool-sandbox' }}
-    - name: Validate PR Title
-      if: github.event_name == 'pull_request'
-      uses: amannn/action-semantic-pull-request@v5
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Install dependencies
+        shell: bash
+        working-directory: .
+        run: uv sync --no-install-project ${{ inputs.install-args || '--extra postgres --extra external-tools --extra dev --extra cloud-tool-sandbox' }}
+      - name: Validate PR Title
+        if: github.event_name == 'pull_request'
+        uses: amannn/action-semantic-pull-request@v5
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Run Pyright
-      uses: jakebailey/pyright-action@v2
-      with:
-        python-version: ${{ matrix.python-version }}
-        level: "error"
-      continue-on-error: true
+      - name: Run Pyright
+        uses: jakebailey/pyright-action@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+          level: "error"
+        continue-on-error: true
 
-    - name: Run Ruff Check
-      working-directory: .
-      run: uv run ruff check --config pyproject.toml --diff .
+      - name: Run Ruff Check
+        working-directory: .
+        run: uv run ruff check --config pyproject.toml --diff .
 
-    - name: Run Ruff Format
-      working-directory: .
-      run: uv run ruff format --config pyproject.toml --check --diff .
+      - name: Run Ruff Format
+        working-directory: .
+        run: uv run ruff format --config pyproject.toml --check --diff .

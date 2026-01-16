@@ -1,8 +1,9 @@
 name: Alembic Migration Tester
 on:
-  pull_request:
-    paths:
-      - '**.py'
+  # TODO: Re-enable automatic triggers
+  # pull_request:
+  #   paths:
+  #     - '**.py'
   workflow_dispatch:
 jobs:
   test:

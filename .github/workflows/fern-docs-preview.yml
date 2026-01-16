@@ -1,13 +1,15 @@
 name: Preview Docs
 
 on:
-  pull_request:
-    branches:
-      - main
-  pull_request_target:
-    branches:
-      - main
-    types: [labeled]
+  workflow_dispatch:
+  # TODO: Re-enable automatic triggers
+  # pull_request:
+  #   branches:
+  #     - main
+  # pull_request_target:
+  #   branches:
+  #     - main
+  #   types: [labeled]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}

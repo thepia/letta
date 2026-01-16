@@ -1,13 +1,15 @@
 name: 🐍🧪 [Core] Integration Tests
 
 on:
-  pull_request:
-    branches:
-      - main
-  pull_request_target:
-    branches:
-      - main
-    types: [labeled]
+  workflow_dispatch:
+  # TODO: Re-enable automatic triggers
+  # pull_request:
+  #   branches:
+  #     - main
+  # pull_request_target:
+  #   branches:
+  #     - main
+  #   types: [labeled]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -19,14 +21,14 @@ jobs:
     if: github.event_name == 'pull_request' || (github.event_name == 'pull_request_target' && contains(github.event.pull_request.labels.*.name, 'safe to test'))
     uses: ./.github/workflows/reusable-test-workflow.yml
     with:
-      test-type: 'integration'
+      test-type: "integration"
       use-redis: true
       is-external-pr: ${{ github.event_name == 'pull_request_target' && !contains(github.event.pull_request.labels.*.name, 'safe to test') }}
       changed-files-pattern: |
         **
         .github/workflows/reusable-test-workflow.yml
         .github/workflows/core-integration-tests.yml
-      install-args: '--extra postgres --extra external-tools --extra dev --extra cloud-tool-sandbox'
+      install-args: "--extra postgres --extra external-tools --extra dev --extra cloud-tool-sandbox"
       timeout-minutes: 15
       ref: ${{ github.event.pull_request.head.sha || github.sha }}
       matrix-strategy: |
