@@ -390,18 +390,49 @@ def serialize_vector(vector: Optional[Union[List[float], np.ndarray]]) -> Option
 
 
 def deserialize_vector(data: Optional[bytes], dialect: Dialect) -> Optional[np.ndarray]:
-    """Convert serialized data back into a NumPy array using sqlite-vec format."""
+    """Convert serialized data back into a NumPy array.
+    
+    Handles multiple vector formats:
+    - PostgreSQL pgvector: Returns as string "[0.05, 0.031, ...]"
+    - PostgreSQL pgvector: Returns as list [0.05, 0.031, ...]
+    - SQLite sqlite-vec: Returns as binary blob
+    """
     if not data:
         return None
 
-    if dialect.name == "sqlite":
-        # Use sqlite-vec format
-        if len(data) % 4 == 0:  # Must be divisible by 4 for float32
-            return np.frombuffer(data, dtype=np.float32)
-        else:
-            raise ValueError(f"Invalid sqlite-vec binary data length: {len(data)}")
+    # Handle PostgreSQL pgvector returning as string
+    if isinstance(data, str):
+        try:
+            data_str = data.strip()
+            # Remove brackets if present
+            if data_str.startswith('[') and data_str.endswith(']'):
+                data_str = data_str[1:-1]
+            # Parse comma-separated floats
+            values = [float(x.strip()) for x in data_str.split(',') if x.strip()]
+            return np.array(values, dtype=np.float32)
+        except (ValueError, AttributeError) as e:
+            raise ValueError(f"Failed to parse PostgreSQL vector string: {data}") from e
+    
+    # Handle PostgreSQL pgvector returning as list
+    if isinstance(data, list):
+        try:
+            return np.array(data, dtype=np.float32)
+        except (ValueError, TypeError) as e:
+            raise ValueError(f"Failed to convert vector list to array: {data}") from e
 
-    return np.frombuffer(data, dtype=np.float32)
+    # Handle SQLite binary format
+    if isinstance(data, bytes):
+        if dialect.name == "sqlite":
+            # Use sqlite-vec format
+            if len(data) % 4 == 0:  # Must be divisible by 4 for float32
+                return np.frombuffer(data, dtype=np.float32)
+            else:
+                raise ValueError(f"Invalid sqlite-vec binary data length: {len(data)}")
+        
+        # Fallback for other binary formats (PostgreSQL native binary, etc.)
+        return np.frombuffer(data, dtype=np.float32)
+    
+    raise TypeError(f"Unexpected vector data type: {type(data)}. Expected str, list, or bytes, got {type(data).__name__}")
 
 
 # --------------------------
